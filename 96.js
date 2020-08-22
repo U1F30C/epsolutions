@@ -574,29 +574,23 @@ function hasRepeated(list) {
   return result;
 }
 
+function roll(unrolledBoard) {
+  return unrolledBoard.reduce((acc, e) => acc + e, "").match(/.{9}/g);
+}
+
 function isValid(board) {
+  board = roll(board);
   let result = true;
   for (let i = 0; i < 9; i++) {
     let repeatedInRowI = hasRepeated(board[i].split(""));
     let repeatedInColumnI = hasRepeated(board.map((row) => row[i]));
     let repeatedInQuadrantI = hasRepeated(elementsInQuadrant(i, board));
     if (repeatedInRowI || repeatedInColumnI || repeatedInQuadrantI) {
-      // console.log(
-      //   repeatedInRowI ? "✗ Row " + i : "",
-      //   repeatedInColumnI ? "✗ Column " + i : "",
-      //   repeatedInQuadrantI ? "✗ Quadrant " + i : ""
-      // );
       result = false;
       break;
     }
   }
-
-  // console.log(uresult ? "OK ✓" : "✗");
   return result;
-}
-
-function roll(unrolledBoard) {
-  return unrolledBoard.reduce((acc, e) => acc + e, "").match(/.{9}/g);
 }
 
 function print(unrolledBoard) {
@@ -609,33 +603,37 @@ function print(unrolledBoard) {
   );
 }
 
+function isReadOnly(cell) {
+  return typeof cell == "string";
+}
+
 function solve(board) {
-  const unrolledBoard = board
-    .reduce((acc, e) => acc + e, "")
-    .split("")
-    .map((e) => (e == "0" ? 0 : e));
   let i = 0;
   while (i < 9 ** 2) {
-    if (typeof unrolledBoard[i] != "string") {
-      unrolledBoard[i] += 1;
+    if (!isReadOnly(board[i])) {
+      board[i] += 1;
     }
-    // console.log(`\n\n${i}: ${unrolledBoard[i]}`);
-    // print(unrolledBoard);
-    if (!isValid(roll(unrolledBoard))) {
-      while (unrolledBoard[i] == 9 || typeof unrolledBoard[i] == "string") {
-        if (unrolledBoard[i] == 9 && typeof unrolledBoard[i] != "string")
-          unrolledBoard[i] = 0;
+    // print(board);
+    if (!isValid(board)) {
+      while (board[i] == 9 || isReadOnly(board[i])) {
+        if (board[i] == 9 && !isReadOnly(board[i])) board[i] = 0;
         i--;
       }
     } else {
       i++;
     }
   }
-  return unrolledBoard;
+  return board;
 }
+
 console.log(
-  boards.map((board, index) => {
+  boards.slice(0, 2).map((board, index) => {
     console.log(index);
-    return solve(board).slice(0, 3);
+    return solve(
+      board
+        .reduce((acc, e) => acc + e, "")
+        .split("")
+        .map((e) => (e == "0" ? 0 : e))
+    ).slice(0, 3);
   })
 );
