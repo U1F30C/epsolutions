@@ -618,27 +618,17 @@ function solve(board) {
   while (i < 9 ** 2) {
     if (typeof unrolledBoard[i] != "string") {
       unrolledBoard[i] += 1;
-      // console.log(`\n\n${i}: ${unrolledBoard[i]}`);
-      for (let x = 0; x < 1000000; x++) {}
-      print(unrolledBoard);
-      if (!isValid(roll(unrolledBoard))) {
-        while (unrolledBoard[i] == 9 || typeof unrolledBoard[i] == "string") {
-          if (unrolledBoard[i] == 9 && typeof unrolledBoard[i] != "string")
-            unrolledBoard[i] = 0;
-          i--;
-        }
-      } else {
-        i++;
+    }
+    // console.log(`\n\n${i}: ${unrolledBoard[i]}`);
+    // print(unrolledBoard);
+    if (!isValid(roll(unrolledBoard))) {
+      while (unrolledBoard[i] == 9 || typeof unrolledBoard[i] == "string") {
+        if (unrolledBoard[i] == 9 && typeof unrolledBoard[i] != "string")
+          unrolledBoard[i] = 0;
+        i--;
       }
     } else {
-      if (!isValid(roll(unrolledBoard))) {
-        i--;
-        while (typeof unrolledBoard[i] == "string") {
-          i--;
-        }
-      } else {
-        i++;
-      }
+      i++;
     }
   }
   return unrolledBoard;
