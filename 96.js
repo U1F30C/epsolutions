@@ -552,11 +552,20 @@ let boards = [
 ];
 
 function elementsInQuadrant(index, board) {
-  const y = Math.floor(index / 3);
-  const x = Math.floor(index % 3);
+  const yQuadrantCoordinate = Math.floor(index / 3);
+  const xQuadrantCoordinate = Math.floor(index % 3);
   let result = [];
-  for (let i = y * (9 * 3); i < y * (9 * 3) + 3 * 9; i += 9) {
-    result = result.concat(board.slice(i + x * 3, i + x * 3 + 3));
+  for (
+    let rowJump = yQuadrantCoordinate * (9 * 3);
+    rowJump < yQuadrantCoordinate * (9 * 3) + 3 * 9;
+    rowJump += 9
+  ) {
+    result = result.concat(
+      board.slice(
+        rowJump + xQuadrantCoordinate * 3,
+        rowJump + xQuadrantCoordinate * 3 + 3
+      )
+    );
   }
   return result;
 }
@@ -564,12 +573,14 @@ function elementsInQuadrant(index, board) {
 function hasRepeated(list) {
   let occurences = {};
   let result = false;
+  let re;
   for (let e of list) {
-    if (occurences[e] && e != 0) {
+    re = e % 10;
+    if (occurences[re] && re != 0) {
       result = true;
       break;
     } else {
-      occurences[e] = true;
+      occurences[re] = true;
     }
   }
   return result;
@@ -611,7 +622,7 @@ function print(unrolledBoard) {
 }
 
 function isReadOnly(cell) {
-  return typeof cell == "string";
+  return cell > 9;
 }
 
 function solve(board) {
@@ -640,7 +651,9 @@ console.log(
       board
         .reduce((acc, e) => acc + e, "")
         .split("")
-        .map((e) => (e == "0" ? 0 : e))
-    ).slice(0, 3);
+        .map((e) => (e == "0" ? 0 : +e + 9 + 1))
+    )
+      .slice(0, 3)
+      .map((n) => n % 10);
   })
 );
