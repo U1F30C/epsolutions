@@ -554,10 +554,11 @@ let boards = [
 function elementsInQuadrant(index, board) {
   const y = Math.floor(index / 3);
   const x = Math.floor(index % 3);
-  return board
-    .slice(y * 3, y * 3 + 3)
-    .map((row) => row.slice(x * 3, x * 3 + 3).split(""))
-    .flat(1);
+  let result = [];
+  for (let i = y * (9 * 3); i < y * (9 * 3) + 3 * 9; i += 9) {
+    result = result.concat(board.slice(i + x * 3, i + x * 3 + 3));
+  }
+  return result;
 }
 
 function hasRepeated(list) {
@@ -579,12 +580,18 @@ function roll(unrolledBoard) {
 }
 
 function isValid(board) {
-  board = roll(board);
+  // board = roll(board);
   let result = true;
   for (let i = 0; i < 9; i++) {
-    let repeatedInRowI = hasRepeated(board[i].split(""));
-    let repeatedInColumnI = hasRepeated(board.map((row) => row[i]));
-    let repeatedInQuadrantI = hasRepeated(elementsInQuadrant(i, board));
+    let row = board.slice(i * 9, i * 9 + 9);
+    let column = [];
+    for (let c = i; c < 9 ** 2; c += 9) {
+      column.push(board[c]);
+    }
+    let quadrant = elementsInQuadrant(i, board);
+    let repeatedInRowI = hasRepeated(row);
+    let repeatedInColumnI = hasRepeated(column);
+    let repeatedInQuadrantI = hasRepeated(quadrant);
     if (repeatedInRowI || repeatedInColumnI || repeatedInQuadrantI) {
       result = false;
       break;
