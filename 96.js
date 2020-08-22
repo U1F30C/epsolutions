@@ -645,7 +645,7 @@ function solve(board) {
 }
 
 console.log(
-  boards.slice(0, 10).map((board, index) => {
+  boards.map((board, index) => {
     console.log(index);
     return solve(
       board
